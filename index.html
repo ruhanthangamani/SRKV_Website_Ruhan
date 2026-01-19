@@ -41,7 +41,7 @@
     <style>
         body {
             overflow-x: hidden;
-            background-color: transparent; /* Changed to allow layers to show */
+            background-color: transparent; 
         }
 
         /* 1. Base Cream Color Layer */
@@ -62,13 +62,12 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            /* Using the local path you provided */
-            background-image: url('SRMV-2.jpg');
+            background-image: url('C:\\Users\\ruhan\\Downloads\\SRMV-2.jpg');
             background-size: cover;
             background-position: center;
-            opacity: 0.15; /* "In Fade" - Low opacity to blend */
-            filter: grayscale(30%); /* Subtle desaturation for classier look */
-            mix-blend-mode: multiply; /* Blends nicely with the cream background */
+            opacity: 0.15; 
+            filter: grayscale(30%); 
+            mix-blend-mode: multiply; 
             z-index: -2;
         }
 
@@ -81,7 +80,7 @@
             height: 100vh;
             z-index: -1;
             opacity: 0.6; 
-            pointer-events: none; /* Let clicks pass through */
+            pointer-events: none; 
         }
 
         /* 3D Tilt Card Effect */
@@ -121,14 +120,15 @@
 <body class="font-sans text-srmv-dark selection:bg-srmv-accent selection:text-white">
 
     <div id="bg-color-layer"></div>
-    <div id="bg-image-layer"></div> <div id="webgl-canvas"></div>
+    <div id="bg-image-layer"></div> 
+    <div id="webgl-canvas"></div>
 
     <nav class="fixed w-full z-50 py-4 transition-all duration-500" id="navbar">
         <div class="container mx-auto px-6">
             <div class="glass-panel rounded-full px-6 py-3 flex justify-between items-center shadow-lg transform translate-y-[-100%] opacity-0" id="nav-content">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-srmv-primary rounded-full flex items-center justify-center text-white shadow-inner animate-pulse-slow">
-                        <i class="fas fa-om text-lg"></i>
+                    <div class="w-10 h-10 bg-white border border-srmv-primary rounded-full flex items-center justify-center shadow-inner animate-pulse-slow overflow-hidden">
+                        <img src="C:\Users\ruhan\Downloads\250px-Emblem-Ramakrishna-Mission-Transparent.png" alt="RKM Logo" class="w-full h-full object-contain p-0.5">
                     </div>
                     <div>
                         <h1 class="font-serif font-bold text-lg leading-none text-srmv-primary tracking-wide">SRMV</h1>
@@ -190,7 +190,7 @@
                     <div class="absolute -inset-4 bg-srmv-primary rounded-2xl -rotate-2 opacity-20 group-hover:-rotate-4 transition-transform duration-700"></div>
                     
                     <div class="relative overflow-hidden rounded-2xl shadow-2xl reveal-img-container">
-                        <img src="SRMV-4.jpg" alt="Campus" class="w-full object-cover h-[500px] transform scale-125 reveal-img">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" alt="Campus" class="w-full object-cover h-[500px] transform scale-125 reveal-img">
                         <div class="absolute bottom-8 right-8 bg-white/90 backdrop-blur p-6 rounded-xl shadow-lg transform translate-y-20 opacity-0 reveal-badge">
                             <p class="text-4xl font-serif font-bold text-srmv-primary">300+</p>
                             <p class="text-xs uppercase tracking-wider text-gray-600">Acres of Serenity</p>
@@ -241,7 +241,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition"></div>
                         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
                             <span class="block text-lg font-bold text-srmv-primary">12</span>
@@ -257,7 +257,7 @@
 
                 <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
                             <span class="block text-lg font-bold text-srmv-primary">26</span>
                             <span class="block text-xs uppercase font-bold text-gray-500">Jan</span>
@@ -272,7 +272,7 @@
 
                 <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
                     <div class="h-56 overflow-hidden relative">
-                        <img src="SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
                             <span class="block text-lg font-bold text-srmv-primary">18</span>
                             <span class="block text-xs uppercase font-bold text-gray-500">Feb</span>
@@ -446,7 +446,7 @@
             </div>
         </div>
         <div class="text-center mt-16 pt-8 border-t border-gray-800 text-xs">
-            &copy; 2026 Ramakrishna Mission Vidyalaya. All Rights Reserved.
+            &copy; 2026 Ramakrishna Mission Vidyalaya. Created by Ruhan T. All Rights Reserved.
         </div>
     </footer>
 
@@ -667,5 +667,4 @@
 
     </script>
 </body>
-
 </html>
