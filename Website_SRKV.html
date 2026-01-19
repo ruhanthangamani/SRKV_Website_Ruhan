@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramakrishna Mission Vidyalaya | Coimbatore</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    },
+                    colors: {
+                        srmv: {
+                            base: '#FDF8F3',    
+                            primary: '#A04030',  
+                            accent: '#D97706',   
+                            dark: '#1c1917',     
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: transparent; /* Changed to allow layers to show */
+        }
+
+        /* 1. Base Cream Color Layer */
+        #bg-color-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #FDF8F3;
+            z-index: -3;
+        }
+
+        /* 2. The New Background Image Layer */
+        #bg-image-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            /* Using the local path you provided */
+            background-image: url('C:\\Users\\ruhan\\Downloads\\SRMV-2.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; /* "In Fade" - Low opacity to blend */
+            filter: grayscale(30%); /* Subtle desaturation for classier look */
+            mix-blend-mode: multiply; /* Blends nicely with the cream background */
+            z-index: -2;
+        }
+
+        /* 3. Three.js Canvas Layer */
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.6; 
+            pointer-events: none; /* Let clicks pass through */
+        }
+
+        /* 3D Tilt Card Effect */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.1s;
+        }
+        .tilt-content {
+            transform: translateZ(20px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FDF8F3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #A04030;
+            border-radius: 4px;
+        }
+
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(160, 64, 48, 0.2);
+            color: transparent;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="font-sans text-srmv-dark selection:bg-srmv-accent selection:text-white">
+
+    <div id="bg-color-layer"></div>
+    <div id="bg-image-layer"></div> <div id="webgl-canvas"></div>
+
+    <nav class="fixed w-full z-50 py-4 transition-all duration-500" id="navbar">
+        <div class="container mx-auto px-6">
+            <div class="glass-panel rounded-full px-6 py-3 flex justify-between items-center shadow-lg transform translate-y-[-100%] opacity-0" id="nav-content">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-srmv-primary rounded-full flex items-center justify-center text-white shadow-inner animate-pulse-slow">
+                        <i class="fas fa-om text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-serif font-bold text-lg leading-none text-srmv-primary tracking-wide">SRMV</h1>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex space-x-8 text-sm font-bold tracking-widest uppercase text-gray-700">
+                    <a href="#about" class="hover:text-srmv-primary transition-colors hover:scale-110 transform inline-block">About</a>
+                    <a href="#news" class="hover:text-srmv-primary transition-colors hover:scale-110 transform inline-block">News</a>
+                    <a href="#academics" class="hover:text-srmv-primary transition-colors hover:scale-110 transform inline-block">Academics</a>
+                    <a href="#outreach" class="hover:text-srmv-primary transition-colors hover:scale-110 transform inline-block">Outreach</a>
+                </div>
+
+                <button class="bg-srmv-primary text-white px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-srmv-accent transition-all hover:shadow-[0_0_20px_rgba(217,119,6,0.5)] transform hover:-translate-y-1">
+                    Donate
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            
+            <div class="overflow-hidden mb-4">
+                <p class="hero-sub text-srmv-accent font-bold tracking-[0.3em] uppercase translate-y-full">Ramakrishna Mission Vidyalaya</p>
+            </div>
+            
+            <h1 class="hero-title text-6xl md:text-8xl font-serif font-bold text-srmv-dark mb-6 leading-tight">
+                <span class="inline-block overflow-hidden"><span class="block translate-y-full">Education</span></span> <br>
+                <span class="inline-block overflow-hidden"><span class="block translate-y-full text-srmv-primary italic">For Character</span></span>
+            </h1>
+
+            <div class="max-w-2xl mx-auto overflow-hidden">
+                <p class="hero-desc text-xl text-gray-800 font-light translate-y-full opacity-0">
+                    "We want that education by which character is formed, strength of mind is increased, the intellect is expanded..."
+                </p>
+            </div>
+
+            <div class="mt-10 flex justify-center gap-6 opacity-0 hero-btns">
+                <a href="#academics" class="px-8 py-4 bg-srmv-primary text-white font-bold rounded-lg shadow-2xl hover:bg-white hover:text-srmv-primary transition-all duration-300 transform hover:scale-105 border border-srmv-primary">
+                    Explore Units
+                </a>
+                <a href="#news" class="px-8 py-4 bg-transparent border border-gray-800 text-gray-800 font-bold rounded-lg hover:bg-gray-800 hover:text-white transition-all duration-300 transform hover:scale-105 backdrop-blur-sm">
+                    Latest Events
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-0 hero-btns">
+            <i class="fas fa-chevron-down text-srmv-primary text-2xl"></i>
+        </div>
+    </header>
+
+    <section id="about" class="py-32 relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <div class="lg:w-1/2 relative group perspective-1000">
+                    <div class="absolute -inset-4 bg-srmv-accent rounded-2xl rotate-3 opacity-20 group-hover:rotate-6 transition-transform duration-700"></div>
+                    <div class="absolute -inset-4 bg-srmv-primary rounded-2xl -rotate-2 opacity-20 group-hover:-rotate-4 transition-transform duration-700"></div>
+                    
+                    <div class="relative overflow-hidden rounded-2xl shadow-2xl reveal-img-container">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" alt="Campus" class="w-full object-cover h-[500px] transform scale-125 reveal-img">
+                        <div class="absolute bottom-8 right-8 bg-white/90 backdrop-blur p-6 rounded-xl shadow-lg transform translate-y-20 opacity-0 reveal-badge">
+                            <p class="text-4xl font-serif font-bold text-srmv-primary">300+</p>
+                            <p class="text-xs uppercase tracking-wider text-gray-600">Acres of Serenity</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 space-y-8">
+                    <h2 class="text-5xl font-serif font-bold text-srmv-dark reveal-text">
+                        About <span class="text-srmv-primary">Us</span>
+                    </h2>
+                    <div class="w-24 h-2 bg-gradient-to-r from-srmv-primary to-srmv-accent rounded-full reveal-line origin-left"></div>
+                    
+                    <p class="text-lg text-gray-600 leading-relaxed reveal-text text-justify font-medium">
+                        Ramakrishna Mission Vidyalaya, Coimbatore, is a major educational centre of the well-known Ramakrishna Mission. Founded by Sri T.S. Avinashilingam in 1930 with an investment of just Rs. 5.75, it has grown into a vast complex of educational service.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="p-6 bg-white/90 backdrop-blur rounded-xl shadow-lg border-l-4 border-srmv-primary reveal-card opacity-0 translate-y-10">
+                            <i class="fas fa-spa text-3xl text-srmv-primary mb-3"></i>
+                            <h4 class="font-bold">Harmonious Personality</h4>
+                            <p class="text-sm text-gray-500 mt-2">Developing body, mind, and spirit together.</p>
+                        </div>
+                        <div class="p-6 bg-white/90 backdrop-blur rounded-xl shadow-lg border-l-4 border-srmv-accent reveal-card opacity-0 translate-y-10">
+                            <i class="fas fa-hand-holding-heart text-3xl text-srmv-accent mb-3"></i>
+                            <h4 class="font-bold">Welfare of Humanity</h4>
+                            <p class="text-sm text-gray-500 mt-2">Service to the poor is worship of God.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="news" class="py-24 bg-gradient-to-b from-stone-50/90 to-white/90 backdrop-blur-sm overflow-hidden">
+        <div class="container mx-auto px-6 mb-12 flex justify-between items-end">
+            <div>
+                <span class="text-srmv-accent font-bold uppercase tracking-widest text-sm">Updates</span>
+                <h2 class="text-4xl font-serif font-bold text-srmv-dark mt-2">Latest Happenings</h2>
+            </div>
+            <div class="hidden md:flex gap-2">
+                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-srmv-primary hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-srmv-primary hover:text-white transition"><i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition"></div>
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
+                            <span class="block text-lg font-bold text-srmv-primary">12</span>
+                            <span class="block text-xs uppercase font-bold text-gray-500">Jan</span>
+                        </div>
+                    </div>
+                    <div class="p-6 relative">
+                        <h3 class="text-xl font-bold font-serif mb-3 group-hover:text-srmv-primary transition">National Youth Day Sports Mela</h3>
+                        <p class="text-gray-600 text-sm mb-4">Celebrating Swami Vivekananda's birthday with vigor and strength.</p>
+                        <a href="#" class="inline-flex items-center text-srmv-accent text-xs font-bold uppercase tracking-widest group-hover:gap-2 transition-all">Read More <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </article>
+
+                <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
+                            <span class="block text-lg font-bold text-srmv-primary">26</span>
+                            <span class="block text-xs uppercase font-bold text-gray-500">Jan</span>
+                        </div>
+                    </div>
+                    <div class="p-6 relative">
+                        <h3 class="text-xl font-bold font-serif mb-3 group-hover:text-srmv-primary transition">Sri Ramakrishna 191st Jayanthi</h3>
+                        <p class="text-gray-600 text-sm mb-4">Upcoming grand celebration with special pooja and bhajans.</p>
+                        <a href="#" class="inline-flex items-center text-srmv-accent text-xs font-bold uppercase tracking-widest group-hover:gap-2 transition-all">Event Details <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </article>
+
+                <article class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:-translate-y-2 transition-all duration-500 news-card opacity-0">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="C:\Users\ruhan\Downloads\SRMV-4.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-center shadow">
+                            <span class="block text-lg font-bold text-srmv-primary">18</span>
+                            <span class="block text-xs uppercase font-bold text-gray-500">Feb</span>
+                        </div>
+                    </div>
+                    <div class="p-6 relative">
+                        <h3 class="text-xl font-bold font-serif mb-3 group-hover:text-srmv-primary transition">Maha Shivaratri 2026</h3>
+                        <p class="text-gray-600 text-sm mb-4">Night-long vigil and worship of Lord Shiva.</p>
+                        <a href="#" class="inline-flex items-center text-srmv-accent text-xs font-bold uppercase tracking-widest group-hover:gap-2 transition-all">Read More <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="academics" class="py-32 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl font-serif font-bold text-srmv-dark mb-4">Academic Institutions</h2>
+                <div class="h-1 w-20 bg-srmv-primary mx-auto rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 perspective-container">
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="absolute inset-0 bg-gradient-to-br from-white to-gray-100 opacity-50"></div>
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-srmv-primary/10 rounded-full blur-3xl group-hover:bg-srmv-primary/20 transition"></div>
+                    
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-university text-3xl text-srmv-primary"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-srmv-primary transition">RKMVERI</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">Deemed University</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-flask text-3xl text-srmv-accent"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-srmv-accent transition">Arts & Science</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">College</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-running text-3xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-green-600 transition">Maruthi College</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">Physical Ed.</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-cogs text-3xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-blue-600 transition">Polytechnic</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">College</span>
+                    </div>
+                </div>
+                
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-leaf text-3xl text-green-700"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-green-700 transition">Agriculture</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">Institute</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-tools text-3xl text-orange-600"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-orange-600 transition">ITI</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">Training</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-school text-3xl text-srmv-dark"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-srmv-primary transition">Vidyalaya High</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">School</span>
+                    </div>
+                </div>
+
+                <div class="tilt-card h-64 bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/50 relative overflow-hidden group cursor-pointer">
+                    <div class="tilt-content h-full flex flex-col items-center justify-center p-6 relative z-10">
+                        <div class="w-20 h-20 mb-4 rounded-full bg-white shadow-lg flex items-center justify-center group-hover:scale-110 transition duration-500">
+                            <i class="fas fa-graduation-cap text-3xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-center font-bold text-gray-800 text-sm md:text-base group-hover:text-purple-600 transition">SSHSS</h3>
+                        <span class="text-xs text-gray-500 uppercase mt-1">English Medium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="outreach" class="py-32 relative bg-srmv-primary text-white clip-path-slant">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="text-6xl font-serif font-bold mb-16 text-center text-outline opacity-30">OUTREACH</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl hover:bg-white/20 transition duration-500 cursor-pointer group outreach-card opacity-0">
+                    <i class="fas fa-home text-4xl mb-6 text-srmv-accent group-hover:scale-125 transition duration-300 block"></i>
+                    <h3 class="text-2xl font-bold mb-2">Rural Dev</h3>
+                    <p class="text-white/70 text-sm">Empowering the surrounding villages with self-reliance.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl hover:bg-white/20 transition duration-500 cursor-pointer group outreach-card opacity-0">
+                    <i class="fas fa-child text-4xl mb-6 text-srmv-accent group-hover:scale-125 transition duration-300 block"></i>
+                    <h3 class="text-2xl font-bold mb-2">Youth Care</h3>
+                    <p class="text-white/70 text-sm">Skill building and character formation for youth.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl hover:bg-white/20 transition duration-500 cursor-pointer group outreach-card opacity-0">
+                    <i class="fas fa-om text-4xl mb-6 text-srmv-accent group-hover:scale-125 transition duration-300 block"></i>
+                    <h3 class="text-2xl font-bold mb-2">Spiritual</h3>
+                    <p class="text-white/70 text-sm">Regular retreats, bhajans and spiritual discourses.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl hover:bg-white/20 transition duration-500 cursor-pointer group outreach-card opacity-0">
+                    <i class="fas fa-heartbeat text-4xl mb-6 text-srmv-accent group-hover:scale-125 transition duration-300 block"></i>
+                    <h3 class="text-2xl font-bold mb-2">Health</h3>
+                    <p class="text-white/70 text-sm">Medical camps and dispensary services for the needy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-20 relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div>
+                <div class="flex items-center gap-2 mb-6">
+                    <i class="fas fa-om text-2xl text-srmv-primary"></i>
+                    <h4 class="text-white font-serif text-xl">SRMV</h4>
+                </div>
+                <p class="text-sm leading-relaxed mb-6">"Atmano mokshartham jagad hitaya cha" <br> For one's own salvation and for the welfare of the world.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold uppercase tracking-wider mb-6 text-sm">Navigation</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="#" class="hover:text-srmv-primary transition">Home</a></li>
+                    <li><a href="#" class="hover:text-srmv-primary transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-srmv-primary transition">Academics</a></li>
+                    <li><a href="#" class="hover:text-srmv-primary transition">Donation</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold uppercase tracking-wider mb-6 text-sm">Contact</h4>
+                <p class="text-sm mb-2">Periyanaickenpalayam,<br>Coimbatore - 641 020</p>
+                <p class="text-sm text-srmv-primary font-bold">+91 422 269 2676</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold uppercase tracking-wider mb-6 text-sm">Social</h4>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded bg-gray-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="w-10 h-10 rounded bg-gray-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="w-10 h-10 rounded bg-gray-800 flex items-center justify-center hover:bg-pink-600 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-16 pt-8 border-t border-gray-800 text-xs">
+            &copy; 2026 Ramakrishna Mission Vidyalaya. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. THREE.JS BACKGROUND (The Neural/Spiritual Network) ---
+        const initThreeJS = () => {
+            const canvas = document.getElementById('webgl-canvas');
+            const scene = new THREE.Scene();
+            
+            // Fog to blend with background color
+            // Using slightly transparent white fog to blend with background image
+            scene.fog = new THREE.FogExp2(0xFDF8F3, 0.002);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 100;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance optimization
+            canvas.appendChild(renderer.domElement);
+
+            // Particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 700;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 300; // Spread wide
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            // Create a custom texture for particles (soft glow)
+            const getTexture = () => {
+                const c = document.createElement('canvas');
+                c.width = 32; c.height = 32;
+                const ctx = c.getContext('2d');
+                const g = ctx.createRadialGradient(16,16,0,16,16,16);
+                g.addColorStop(0, 'rgba(160, 64, 48, 1)'); // Primary Red
+                g.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(16,16,16,0,Math.PI*2); ctx.fill();
+                return new THREE.CanvasTexture(c);
+            }
+
+            const material = new THREE.PointsMaterial({
+                size: 1.5,
+                map: getTexture(),
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.MultiplyBlending // Softer blend
+            });
+
+            // Lines connecting particles
+            const linesMaterial = new THREE.LineBasicMaterial({
+                color: 0xA04030,
+                transparent: true,
+                opacity: 0.15
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, material);
+            scene.add(particlesMesh);
+
+            // Mouse interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX - windowHalfX);
+                mouseY = (event.clientY - windowHalfY);
+            });
+
+            // Animate
+            const clock = new THREE.Clock();
+
+            const tick = () => {
+                const elapsedTime = clock.getElapsedTime();
+
+                targetX = mouseX * 0.001;
+                targetY = mouseY * 0.001;
+
+                // Rotate entire system slowly
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += (targetY - particlesMesh.rotation.x) * 0.05;
+                particlesMesh.rotation.y += (targetX - particlesMesh.rotation.y) * 0.05;
+
+                // Wave effect on particles
+                const positions = particlesGeometry.attributes.position.array;
+                for(let i=0; i<particlesCount; i++){
+                    const i3 = i*3;
+                    const x = particlesGeometry.attributes.position.array[i3];
+                    // Sine wave movement
+                    particlesGeometry.attributes.position.array[i3 + 1] += Math.sin(elapsedTime + x) * 0.05;
+                }
+                particlesGeometry.attributes.position.needsUpdate = true;
+
+                renderer.render(scene, camera);
+                requestAnimationFrame(tick);
+            };
+
+            tick();
+
+            // Resize handle
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+        
+        initThreeJS();
+
+
+        // --- 2. GSAP MASSIVE ANIMATIONS ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Navbar Entry
+        gsap.to("#nav-content", {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            delay: 0.5,
+            ease: "power3.out"
+        });
+
+        // Hero Text Stagger
+        const tlHero = gsap.timeline();
+        tlHero.to(".hero-sub", { y: 0, duration: 1, ease: "power4.out" })
+              .to(".hero-title span span", { y: 0, duration: 1.2, stagger: 0.2, ease: "power4.out" }, "-=0.5")
+              .to(".hero-desc", { y: 0, opacity: 1, duration: 1, ease: "power2.out" }, "-=0.8")
+              .to(".hero-btns", { opacity: 1, duration: 1 }, "-=0.5");
+
+        // About Section Reveal
+        gsap.utils.toArray(".reveal-text").forEach(text => {
+            gsap.from(text, {
+                scrollTrigger: {
+                    trigger: text,
+                    start: "top 80%",
+                },
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        gsap.from(".reveal-img", {
+            scrollTrigger: { trigger: ".reveal-img-container", start: "top 70%" },
+            scale: 1.5,
+            duration: 1.5,
+            ease: "power2.out"
+        });
+
+        gsap.to(".reveal-badge", {
+            scrollTrigger: { trigger: ".reveal-img-container", start: "top 60%" },
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            delay: 0.5
+        });
+
+        gsap.from(".reveal-card", {
+            scrollTrigger: { trigger: ".reveal-card", start: "top 85%" },
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2
+        });
+
+        // News Cards Stagger
+        gsap.to(".news-card", {
+            scrollTrigger: { trigger: "#news", start: "top 70%" },
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "back.out(1.7)"
+        });
+
+        // Outreach Cards Stagger
+        gsap.to(".outreach-card", {
+            scrollTrigger: { trigger: "#outreach", start: "top 75%" },
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out"
+        });
+
+
+        // --- 3. 3D TILT EFFECT FOR CARDS (Vanilla JS) ---
+        const cards = document.querySelectorAll('.tilt-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = ((y - centerY) / centerY) * -10; // Max rotation deg
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
+
+    </script>
+</body>
+</html>
